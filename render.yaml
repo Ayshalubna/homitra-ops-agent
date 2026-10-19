@@ -1,0 +1,25 @@
+# Render deployment blueprint for the Homitra Ops Agent.
+# Deploy: Render dashboard -> New -> Blueprint -> pick this repo.
+# Secrets (sync:false) are entered in the Render dashboard, never committed here.
+services:
+  - type: web
+    name: homitra-ops-agent
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.4"
+      - key: LLM_PROVIDER
+        value: stub
+      - key: AUTO_APPROVE
+        value: "false"
+      # --- set these in the Render dashboard (kept out of git) ---
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: API_TOKEN
+        sync: false
